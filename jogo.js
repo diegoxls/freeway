@@ -5,6 +5,32 @@ const contexto = canvas.getContext('2d');
 const sprites = new Image();
 sprites.src = './img/sprites.png';
 
+const vaquinha = {
+    spriteX: 64,
+    spriteY: 0,
+    largura: 42,
+    altura: 36,
+    x: 100,
+    y: 366,
+    velocidade: 5,
+    mover(tecla){
+        if ( tecla == "ArrowUp" ){
+            this.y -= this.velocidade;
+        } else if ( tecla == "ArrowDown") {
+            this.y += this.velocidade;
+        }
+    }, 
+    desenha() {
+        contexto.drawImage(
+            sprites, 
+            this.spriteX, this.spriteY, 
+            this.largura, this.altura, 
+            this.x, this.y, 
+            this.largura * 0.85, this.altura*0.85, 
+        )
+    }
+}
+
 const carro1 = {
     spriteX: 0,
     spriteY: 0,
@@ -142,14 +168,14 @@ const estrada = {
 
 function loop(){
     estrada.desenha();
-
+    vaquinha.desenha();
+    
     for( let i = 0; i < carros.length; i++){
         carros[i].x -= carros[i].velocidade
         if(carros[i].x < -50){
             carros[i].x = 600;
         }
         carros[i].desenha();
-
     }
 
     // for (i = 10;i<canvas.height;i+=10){
@@ -159,5 +185,11 @@ function loop(){
     requestAnimationFrame(loop);
 }
 
+window.addEventListener('keydown', function(){
+    vaquinha.mover(this.event.key);
+    this.console.log(event.key);
+}
+
+);
 
 loop();
