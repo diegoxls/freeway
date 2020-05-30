@@ -2,8 +2,33 @@
 const canvas = document.querySelector('canvas');
 const contexto = canvas.getContext('2d');
 
+
+const somColidiu = new Audio();
+somColidiu.src = "./sons/colidiu.mp3";
+
 const sprites = new Image();
 sprites.src = './img/sprites.png';
+
+function colidiu(vaquinha, carros){
+
+    const xV = vaquinha.x;
+    const yV = vaquinha.y;
+    const aV = vaquinha.altura;
+    const lV = vaquinha.largura;
+
+    for (let i = 0; i < carros.length; i++){
+        if(     ((xV >= carros[i].x     &&  xV <= carros[i].x + carros[i].largura) 
+            ||  (xV + lV >= carros[i].x &&  xV + lV <= carros[i].x + carros[i].largura)) 
+            &&  ((yV >= carros[i].y     &&  yV <= carros[i].y + carros[i].altura) 
+            ||  (yV + aV >= carros[i].y &&  yV + aV <= carros[i].y + carros[i].altura))){
+
+                somColidiu.play();
+                setTimeout(() => {
+                    vaquinha.y = 366;
+                }, 100);
+        }
+    }   
+}
 
 const vaquinha = {
     spriteX: 64,
@@ -15,9 +40,9 @@ const vaquinha = {
     velocidade: 5,
     mover(tecla){
         if ( tecla == "ArrowUp" ){
-            this.y -= this.velocidade;
+            this.y = Math.max(0, this.y - this.velocidade);
         } else if ( tecla == "ArrowDown") {
-            this.y += this.velocidade;
+            this.y = Math.min(canvas.height - this.altura, this.y + this.velocidade);
         }
     }, 
     desenha() {
@@ -169,6 +194,7 @@ const estrada = {
 function loop(){
     estrada.desenha();
     vaquinha.desenha();
+    colidiu(vaquinha, carros);
     
     for( let i = 0; i < carros.length; i++){
         carros[i].x -= carros[i].velocidade
@@ -187,7 +213,6 @@ function loop(){
 
 window.addEventListener('keydown', function(){
     vaquinha.mover(this.event.key);
-    this.console.log(event.key);
 }
 
 );
